@@ -27,14 +27,15 @@ public class RestLogAspect {
         if (signature instanceof MethodSignature) {
             Method method = ((MethodSignature) signature).getMethod();
 
-            RestLog loggable = AnnotationUtils.findAnnotation(method, RestLog.class);
+            RestLog restLog = AnnotationUtils.findAnnotation(method, RestLog.class);
 
-            if (loggable == null ) {
-                loggable =  AnnotationUtils.findAnnotation(method.getDeclaringClass(), RestLog.class);
+            if (restLog == null ) {
+                restLog =  AnnotationUtils.findAnnotation(method.getDeclaringClass(), RestLog.class);
             }
 
-            String loggerName = loggable.loggerName();
-            Class clazz = loggable.clazz();
+            String loggerName = restLog.loggerName();
+            Class clazz = restLog.clazz();
+            String logFile = restLog.logFile();
 
             logProducer.log(new RestLogContainer(joinPoint,
                     StringUtils.isNoneBlank(loggerName)
@@ -43,8 +44,9 @@ public class RestLogAspect {
                             ? joinPoint.getSignature().getDeclaringType()
                             : clazz
                     ).getName(),
-                    loggable.level(),
-                    loggable.ignoreParams()
+                    logFile,
+                    restLog.level(),
+                    restLog.ignoreParams()
             ));
         }
         return joinPoint.proceed();

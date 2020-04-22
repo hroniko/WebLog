@@ -7,14 +7,10 @@
     <groupId>com.github.hroniko</groupId>
     <artifactId>weblog</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0</version>
+    <version>1.0.2</version>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
@@ -107,10 +103,7 @@
 
         <commons-lang3.version>3.10</commons-lang3.version>
         <guava.version>28.2-jre</guava.version>
-        <webjars-locator.version>0.39</webjars-locator.version>
-        <webjars-sockjs-client.version>1.1.2</webjars-sockjs-client.version>
-        <webjars-stomp-websocket.version>2.3.3-1</webjars-stomp-websocket.version>
-        <webjars-bootstrap.version>4.4.1-1</webjars-bootstrap.version>
+        <apache-commons-io.version>2.6</apache-commons-io.version>
     </properties>
 
     <profiles>
@@ -180,16 +173,7 @@
             <artifactId>spring-boot-starter-data-rest</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>${spring-boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-websocket</artifactId>
-            <version>${spring-boot.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
@@ -206,24 +190,9 @@
             <version>${guava.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>webjars-locator</artifactId>
-            <version>${webjars-locator.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>sockjs-client</artifactId>
-            <version>${webjars-sockjs-client.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>stomp-websocket</artifactId>
-            <version>${webjars-stomp-websocket.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>bootstrap</artifactId>
-            <version>${webjars-bootstrap.version}</version>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${apache-commons-io.version}</version>
         </dependency>
     </dependencies>
 

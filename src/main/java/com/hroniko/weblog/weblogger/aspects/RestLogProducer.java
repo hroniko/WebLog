@@ -3,8 +3,7 @@ package com.hroniko.weblog.weblogger.aspects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
 
-import com.hroniko.weblog.sender.MessageSender;
-import com.hroniko.weblog.springcontext.SpringContextBridge;
+import com.hroniko.weblog.persistence.FileSaver;
 import com.hroniko.weblog.weblogger.entities.RestLogContainer;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -37,6 +36,8 @@ public class RestLogProducer {
     public void log(RestLogContainer request) throws Throwable {
         ProceedingJoinPoint joinPoint = request.getJoinPoint();
         Object result = joinPoint.proceed();
+
+        String logFile = request.getLogFile();
 
         LogLevel invokeLevel = request.getLevel();
         int[] ignoreParams = request.getIgnoreParams();
@@ -110,8 +111,7 @@ public class RestLogProducer {
 
         String message = createMessage(invokeLevel, restType, fullPath, targetClass, method, args, ignoreParams, result);
 
-        MessageSender messageSender = SpringContextBridge.services().getMessageSender();
-        messageSender.sendMessage(message);
+        FileSaver.writeToFS(logFile, message);
 
 
     }
@@ -149,22 +149,23 @@ public class RestLogProducer {
                                  Object result
     ){
         StringBuffer log = new StringBuffer();
+        String separator = "\t";
         log
                 /* add Date */
                 .append(dateFormatter.format(date))
-                .append("; ")
+                .append(separator)
 
                 /* add Logger level */
                 .append(level.name())
-                .append("; ")
+                .append(separator)
 
                 /* add rest type */
                 .append(restType)
-                .append("; ")
+                .append(separator)
 
                 /* add rest path */
                 .append(fullPath)
-                .append("; ")
+                .append(separator)
 
                 /* add class name dot method*/
                 .append(targetClass.getSimpleName())
@@ -172,17 +173,18 @@ public class RestLogProducer {
                 .append(method.getName())
 
                 /* add (params) */
-                .append(Arrays.stream(args)
-                        .map(Object::toString)
+//                .append(Arrays.stream(args)
+//                        .map(Object::toString)
+//                        .collect(Collectors.joining(", ", "(", ")"))
+                .append(Arrays.stream(method.getParameters())
+                        .map(x -> x.getType() + " " + x.getName())
                         .collect(Collectors.joining(", ", "(", ")"))
                 )
-                .append("; ");
+                .append(separator);
 
         /* add parameters values (request and body) */
+        log.append("INPUT ");
         if (args.length > 0) {
-            log.append("\n");
-            log.append("INPUT ");
-
 
             Stream<Pair<Parameter, Object>> pair =  Streams.zip(Arrays.stream(method.getParameters()),
                     Arrays.stream(args), Pair::of);
@@ -209,21 +211,16 @@ public class RestLogProducer {
                 jsonStyle.append(log, paramName, arg, true);
             });
         } else {
-            log.append("INPUT ");
             log.append("<NONE> ");
         }
-        log.append("; ");
+        log.append(separator);
 
         /* add return values (response) */
+        log.append("OUTPUT ");
         if (result != null) {
-            log.append("\n");
-            log.append("OUTPUT ");
-
             Stream.of(ToStringStyle.JSON_STYLE)
                     .forEach(style -> style.append(log, result.getClass().getSimpleName(), result, true));
-
         } else {
-            log.append("OUTPUT ");
             log.append("<NONE> ");
         }
 

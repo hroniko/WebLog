@@ -9,6 +9,8 @@ import java.lang.annotation.*;
 @Inherited
 public @interface RestLog {
 
+    String logFile() default "/logs/restlog.log";
+
     LogLevel level() default LogLevel.DEBUG;
 
     Class clazz() default Void.class;
@@ -17,5 +19,4 @@ public @interface RestLog {
 
     int[] ignoreParams() default {};
 
-    boolean printStacktrace() default false;
 }
