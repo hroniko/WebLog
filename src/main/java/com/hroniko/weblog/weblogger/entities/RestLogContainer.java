@@ -2,58 +2,77 @@ package com.hroniko.weblog.weblogger.entities;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.boot.logging.LogLevel;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class RestLogContainer {
     private final static int[] NO_PARAMS = {};
 
-    private final ProceedingJoinPoint joinPoint;
-    private final String loggerName;
+    private final JoinPoint joinPoint;
+    private final Object result;
     private final String logFile;
-    private final LogLevel level;
     private final int[] ignoreParams;
+    private final HttpServletRequest request;
+    private final HttpServletResponse response;
+    private final Throwable exception;
 
-    public RestLogContainer(ProceedingJoinPoint joinPoint,
-                            String loggerName,
+    public RestLogContainer(JoinPoint joinPoint,
+                            Object result,
                             String logFile,
-                            LogLevel level,
-                            int[] ignoreParams) {
+                            int[] ignoreParams,
+                            HttpServletRequest request,
+                            HttpServletResponse response,
+                            Throwable exception) {
         this.joinPoint = joinPoint;
-        this.loggerName = loggerName;
+        this.result = result;
         this.logFile = logFile;
-        this.level = level == null ? LogLevel.DEBUG : level;
         this.ignoreParams = ignoreParams == null ? NO_PARAMS : ignoreParams;
+        this.request = request;
+        this.response = response;
+        this.exception = exception;
     }
 
-    public ProceedingJoinPoint getJoinPoint() {
+    public JoinPoint getJoinPoint() {
         return joinPoint;
     }
 
-    public String getLoggerName() {
-        return loggerName;
+    public Object getResult() {
+        return result;
     }
 
     public String getLogFile() {
         return logFile;
     }
 
-    public LogLevel getLevel() {
-        return level;
-    }
-
     public int[] getIgnoreParams() {
         return ignoreParams;
+    }
+
+    public HttpServletRequest getRequest() {
+        return request;
+    }
+
+    public HttpServletResponse getResponse() {
+        return response;
+    }
+
+    public Throwable getException() {
+        return exception;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
                 .append("joinPoint", joinPoint)
-                .append("loggerName", loggerName)
                 .append("logFile", logFile)
-                .append("invoke", level)
                 .append("ignoreParams", ignoreParams)
+                .append("request", request)
+                .append("response", response)
+                .append("exception", exception)
                 .toString();
     }
 }
