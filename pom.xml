@@ -103,7 +103,7 @@
 
         <commons-lang3.version>3.10</commons-lang3.version>
         <guava.version>28.2-jre</guava.version>
-        <apache-commons-io.version>2.6</apache-commons-io.version>
+        <apache-commons-io.version>2.7</apache-commons-io.version>
     </properties>
 
     <profiles>
